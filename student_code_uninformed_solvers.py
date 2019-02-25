@@ -19,8 +19,17 @@ class SolverDFS(UninformedSolver):
             True if the desired solution state is reached, False otherwise
         """
         ### Student code goes here
-        return True
-
+        if self.gm.isWon():
+            return True
+        self.currentState.= self.gm.getMovables()
+        self.currentState = GameState(self.gm.getGameState(), self.currentState.depth+1, )
+        if moves:
+            for move in moves:
+                self.gm.makeMove(move)
+                if self.solveOneStep():
+                    return True
+                self.gm.reverseMove(move)
+        return False
 
 class SolverBFS(UninformedSolver):
     def __init__(self, gameMaster, victoryCondition):
@@ -40,4 +49,19 @@ class SolverBFS(UninformedSolver):
             True if the desired solution state is reached, False otherwise
         """
         ### Student code goes here
-        return True
+        if self.gameMaster.getGameState() == self.victoryCondition:
+            return True
+        moves = self.gameMaster.getMovables()
+        if moves:
+            for move in moves:
+                self.gameMaster.makeMove(move)
+                if self.gameMaster.getGameState() == self.victoryCondition:
+                    return True
+                self.gameMaster.reverseMove(move)
+            for move in moves:
+                self.gameMaster.makeMove(move)
+                if self.solveOneStep():
+                    return True
+                self.gameMaster.reverseMove(move)
+        return False
+

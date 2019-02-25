@@ -34,7 +34,35 @@ class TowerOfHanoiGame(GameMaster):
             A Tuple of Tuples that represent the game state
         """
         ### student code goes here
-        pass
+        p1 = self.kb.kb_ask(Fact(Statement(["on", "?disk", "peg1"])))
+        if p1:
+            temp = []
+            for i in p1:
+                temp.append(int(i.bindings_dict["?disk"][4:5]))
+            temp.sort()
+            p1 = tuple(temp)
+        else:
+            p1= tuple()
+        p2 = self.kb.kb_ask(Fact(Statement(["on", "?disk", "peg2"])))
+        if p2:
+            temp = []
+            for i in p2:
+                temp.append(int(i.bindings_dict["?disk"][4:5]))
+            temp.sort()
+            p2 = tuple(temp)
+        else:
+            p2 = tuple()
+        p3 = self.kb.kb_ask(Fact(Statement(["on", "?disk", "peg3"])))
+        if p3:
+            temp = []
+            for i in p3:
+                temp.append(int(i.bindings_dict["?disk"][4:5]))
+            temp.sort()
+            p3 = tuple(temp)
+        else:
+            p3 = tuple()
+
+        return tuple([p1, p2, p3])
 
     def makeMove(self, movable_statement):
         """
@@ -53,7 +81,25 @@ class TowerOfHanoiGame(GameMaster):
             None
         """
         ### Student code goes here
-        pass
+
+        terms = movable_statement.terms
+        disk = terms[0]
+        p1 = terms[1]
+        p2 = terms[2]
+        self.kb.kb_retract(Fact(movable_statement))
+        self.kb.kb_retract(Fact(Statement(["on", disk, p1])))
+
+        disk_on = self.kb.kb_ask(Fact(Statement(["on", disk, "?disk"])))
+        if disk_on:
+            val = disk_on[0].bindings_dict["?disk"]
+            self.kb.kb_retract(Fact(Statement(["on", disk, val])))
+            self.kb.kb_retract(Fact(Statement(["tops", disk, p1])))
+            self.kb.kb_assert(Fact(Statement(["tops", val, p1])))
+
+        self.kb.kb_retract(Fact(Statement(["empty", p2])))
+
+        self.kb.kb_assert(Fact(Statement(["tops", disk, p2])))
+        self.kb.kb_assert(Fact(Statement(["on", disk, p2])))
 
     def reverseMove(self, movable_statement):
         """
